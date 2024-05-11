@@ -118,7 +118,7 @@ always_comb begin : fsm_next
         	if (bounds_valid_flag_i)
         		next_state = read_mem;
         	else 
-        		next_state = z_write_en;
+        		next_state = z_set_data;
         end
           
         read_mem: begin
@@ -141,16 +141,8 @@ always_comb begin : fsm_next
             next_state = loaded;
         end
 
-        z_write_en: begin
-            next_state = z_set_data;
-        end
-
         z_set_data: begin
-            next_state = z_write_dis;
-        end
-
-        z_write_dis: begin
-          next_state = diagonal_count;
+            next_state = diagonal_count;
         end
 
         diagonal_count: begin
@@ -174,33 +166,18 @@ end : fsm_next
 
 	/* Output stage */ 
 	always_ff @(posedge clk or negedge rst_n) begin : fsm_outputs
-		/* Init */ 
-		if (~rst_n) begin 
-			register_load_flag_o = 1'b0; 
-			diag_size_flag_o = 1'b0;
-			half_loop_load_en_o = 1'b0;
-			read_memory_flag_o = 1'b0;
-			get_product_flag_o = 1'b0;
-			add_product_flag_o = 1'b0; 
-			iteration_count_flag_o = 1'b0;
-			diagonal_count_flag_o = 1'b0;
-			z_write_o = 1'b0;
-			done_flag_o = 1'b0;
-			busy_flag_o = 1'b0;
-		end 
-		else begin
-			busy_flag_o = 1'b1;
-			register_load_flag_o = 1'b0; 
-			diag_size_flag_o = 1'b0;
-			half_loop_load_en_o = 1'b0;
-			read_memory_flag_o = 1'b0;
-			get_product_flag_o = 1'b0;
-			add_product_flag_o = 1'b0; 
-			iteration_count_flag_o = 1'b0;
-			diagonal_count_flag_o = 1'b0;
-			z_write_o = 1'b0;
-			done_flag_o = 1'b0;
-		end 
+
+		register_load_flag_o = 1'b0; 
+		diag_size_flag_o = 1'b0;
+		half_loop_load_en_o = 1'b0;
+		read_memory_flag_o = 1'b0;
+		get_product_flag_o = 1'b0;
+		add_product_flag_o = 1'b0; 
+		iteration_count_flag_o = 1'b0;
+		diagonal_count_flag_o = 1'b0;
+		z_write_o = 1'b0;
+		done_flag_o = 1'b0;
+		busy_flag_o = 1'b0;
 
 		unique case (next_state) 
 			_init: begin
@@ -240,14 +217,8 @@ end : fsm_next
 			iteration_count: 
 				iteration_count_flag_o = 1'b1; 
 
-			z_write_en: 
-				z_write_o = 1'b1; 
-
 			z_set_data: 
 				z_write_o = 1'b1;
-
-			z_write_dis:  
-				z_write_o = 1'b0; 
 
 			diagonal_count: 
 				diagonal_count_flag_o = 1'b1;
