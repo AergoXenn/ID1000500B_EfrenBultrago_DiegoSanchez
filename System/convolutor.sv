@@ -109,14 +109,14 @@ module convolutor #(
 
 /* ******************************* SIZE ADDER BEGIN ********************* */  
 
-  logic [ADDR_WIDTH:0] total_diagonals_temp; 
-  logic [ADDR_WIDTH+1:0] total_diagonals; 
-  logic [ADDR_WIDTH+1:0] size_reg;
+  logic [5:0] total_diagonals_temp; 
+  logic [5:0] total_diagonals; 
+  logic [5:0] size_reg;
 
   /* Diagonal size calculation: Step 1 - Absolute Size */ 
   convolutor_std_adder_p # (
-    .INPUT_WORD_SIZE (ADDR_WIDTH),
-    .OUTPUT_WORD_SIZE(ADDR_WIDTH+1)
+    .INPUT_WORD_SIZE (5),
+    .OUTPUT_WORD_SIZE(6)
     ) size_calc_01 (
     .word_a_i(x_size),
     .word_b_i(y_size_i), 
@@ -128,7 +128,7 @@ module convolutor #(
 
   /* Diagonal size register : total_diagonals */
   convolutor_std_register # (
-    .DATA_WIDTH(ADDR_WIDTH+2) //Why +2???
+    .DATA_WIDTH(6) //Why +2???
     ) size_register (
     .clk     (clk),
     .rst_n   (rst_n),
@@ -143,11 +143,11 @@ module convolutor #(
 
 /* *************************** DIAGONAL COUNTER BEGIN ************************** */  
 
-  logic [DATA_WIDTH-1:0] current_diagonal; 
+  logic [5:0] current_diagonal; 
 
   /* Current diagonal register + counter */ 
   convolutor_upcounter_cmp_reg # (
-    .DATA_WIDTH(DATA_WIDTH)
+    .DATA_WIDTH(6)
     ) current_diagonal_counter (
     .clk              (clk),
     .rst_n            (rst_n),
@@ -163,7 +163,7 @@ module convolutor #(
 
   /* Current diagonal comparator */ 
   convolutor_std_comparator_p # (
-    .WORD_SIZE(DATA_WIDTH), 
+    .WORD_SIZE(6), 
     .TYPE     (0)
     ) diagonal_comparator (
     .word_a_i(current_diagonal), 
