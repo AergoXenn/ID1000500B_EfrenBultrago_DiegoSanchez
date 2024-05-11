@@ -109,9 +109,9 @@ module convolutor #(
 
 /* ******************************* SIZE ADDER BEGIN ********************* */  
 
-  logic [DATA_WIDTH-1:0] total_diagonals_temp; 
-  logic [ADDR_WIDTH:0] total_diagonals; 
-  logic [DATA_WIDTH-1:0] size_reg;
+  logic [ADDR_WIDTH:0] total_diagonals_temp; 
+  logic [ADDR_WIDTH+1:0] total_diagonals; 
+  logic [ADDR_WIDTH+1:0] size_reg;
 
   /* Diagonal size calculation: Step 1 - Absolute Size */ 
   convolutor_std_adder_p # (
@@ -124,18 +124,11 @@ module convolutor #(
     );
 
   /* Diagonal size calculation: Step 2 - Remove Size */   
-  convolutor_std_adder_p # (
-    .INPUT_WORD_SIZE (ADDR_WIDTH),
-    .OUTPUT_WORD_SIZE(ADDR_WIDTH+1)
-    ) size_calc_02 (
-    .word_a_i(total_diagonals_temp),
-    .word_b_i(-1), 
-    .word_c_o(total_diagonals)
-    );
+  assign total_diagonals = $signed(total_diagonals_temp) - $signed(1);
 
   /* Diagonal size register : total_diagonals */
   convolutor_std_register # (
-    .DATA_WIDTH(ADDR_WIDTH)
+    .DATA_WIDTH(ADDR_WIDTH+2) //Why +2???
     ) size_register (
     .clk     (clk),
     .rst_n   (rst_n),
