@@ -46,25 +46,24 @@ module convolutor_fsm (
 	); 
 
 	typedef enum logic [4:0] {
-		_init = 					5'b00000,
-		register_load, //Controls master initialization enable
-		get_diag_size, //Controls get size enable
-		preload, 
-		load_half_l, 
-		load_half_h, 
-		loaded, 
-		read_mem, //Controls X & Y temp enable
-		get_product, //Controls product enable
-		product_stable, 
-		add_product, //Controls accumulator enable
-		iteration_count, //Controls Up-down counter enable
-		z_write_en, 
-		z_set_data, 
-		z_write_dis, 
-		diagonal_count, 
-		p_busy_l,
-		p_done_h,
-		p_done_l 
+		_INIT = 					5'b00000,
+		REGISTER_LOAD, //Controls master initialization enable
+		GET_DIAG_SIZE, //Controls get size enable
+		PRELOAD, 
+		LOAD_HALF_L, 
+		LOAD_HALF_H, 
+		LOADED, 
+		READ_MEMORY, //Controls X & Y temp enable
+		GET_PRODUCT, //Controls product enable
+		PRODUCT_STABLE, 
+		ADD_PRODUCT, //Controls accumulator enable
+		ITERATION_COUNT, //Controls Up-down counter enable
+		Z_SET_DATA, 
+		DIAGONAL_COUNT, 
+		BUSY_LOW,
+		DONE_H,
+		DONE_L, 
+		XXX = 5'bxxxxx
 	} fsm_state_t;
 
 	fsm_state_t current_state; 
@@ -73,7 +72,7 @@ module convolutor_fsm (
 	/* State keeping block */
 	always_ff @(posedge clk or negedge rst_n) begin : fsm_state
 		if (~rst_n) begin
-			current_state <= _init;
+			current_state <= _INIT;
 		end 
 		else begin 
 			current_state = next_state;
@@ -82,84 +81,86 @@ module convolutor_fsm (
 	
 /* Next state logic */
 always_comb begin : fsm_next
-    next_state = current_state;
+    next_state = XXX;
     case (current_state)
-        _init: begin
+        _INIT: begin
             if (start_i)
-                next_state = register_load;
+                next_state = REGISTER_LOAD;
         end
         
-        register_load: begin
-            next_state = get_diag_size;
+        REGISTER_LOAD: begin
+            next_state = GET_DIAG_SIZE;
         end
 
-        get_diag_size: begin
-            next_state = preload;
+        GET_DIAG_SIZE: begin
+            next_state = PRELOAD;
         end
 
-        preload: begin
+        PRELOAD: begin
             if (calculation_complete_flag_i)
-              next_state = p_busy_l;
+              next_state = BUSY_LOW;
             else if (half_loop_flag_i)
-               next_state = load_half_h;
+               next_state = LOAD_HALF_H;
             else if (~half_loop_flag_i)
-              next_state = load_half_l;
+              next_state = LOAD_HALF_L;
         end
 
-        load_half_l: begin
-            next_state = loaded;
+        LOAD_HALF_L: begin
+            next_state = LOADED;
         end
 
-        load_half_h: begin
-            next_state = loaded;
+        LOAD_HALF_H: begin
+            next_state = LOADED;
         end
 
-        loaded: begin
+        LOADED: begin
         	if (bounds_valid_flag_i)
-        		next_state = read_mem;
+        		next_state = READ_MEMORY;
         	else 
-        		next_state = z_set_data;
+        		next_state = Z_SET_DATA;
         end
           
-        read_mem: begin
-            next_state = get_product;
+        READ_MEMORY: begin
+            next_state = GET_PRODUCT;
         end
 
-        get_product: begin
-          next_state = product_stable;
+        GET_PRODUCT: begin
+          next_state = PRODUCT_STABLE;
         end
 
-        product_stable: begin
-        	next_state = add_product;
+        PRODUCT_STABLE: begin
+        	next_state = ADD_PRODUCT;
         end
 
-        add_product: begin
-            next_state = iteration_count;
+        ADD_PRODUCT: begin
+            next_state = ITERATION_COUNT;
         end
 
-        iteration_count: begin
-            next_state = loaded;
+        ITERATION_COUNT: begin
+            next_state = LOADED;
         end
 
-        z_set_data: begin
-            next_state = diagonal_count;
+        Z_SET_DATA: begin
+            next_state = DIAGONAL_COUNT;
         end
 
-        diagonal_count: begin
-        	next_state = preload;
+        DIAGONAL_COUNT: begin
+        	next_state = PRELOAD;
         end
 
-        p_busy_l: begin
-            next_state = p_done_h;
+        BUSY_LOW: begin
+            next_state = DONE_H;
         end
 
-        p_done_h: begin
-            next_state = p_done_l;
+        DONE_H: begin
+            next_state = DONE_L;
         end
 
-        p_done_l: begin
+        DONE_L: begin
             if (~start_i)
-                next_state = _init;
+                next_state = _INIT;
+            else  
+            	next_state = DONE_L;
         end
     endcase // current_state
 end : fsm_next
@@ -177,60 +178,65 @@ end : fsm_next
 		diagonal_count_flag_o = 1'b0;
 		z_write_o = 1'b0;
 		done_flag_o = 1'b0;
-		busy_flag_o = 1'b0;
+		busy_flag_o = 1'b1;
 
 		unique case (next_state) 
-			_init: begin
+			_INIT: begin
 				busy_flag_o = 1'b0; 
 				done_flag_o = 1'b0;
 			end
 
-			register_load: begin
+			REGISTER_LOAD: begin
 				busy_flag_o = 1'b1;
 				register_load_flag_o = 1'b1; 
 			end
 
-			get_diag_size: 
+			GET_DIAG_SIZE: 
 				diag_size_flag_o = 1'b1;
 
-			preload: ;
+			PRELOAD: ;
 
-			load_half_h: 
+			LOAD_HALF_H: 
 				half_loop_load_en_o = 1'b1;
 
-			load_half_l: 
+			LOAD_HALF_L: 
 				half_loop_load_en_o = 1'b1;
 
-			loaded: ; 
+			LOADED: ; 
 
-			read_mem: 
+			READ_MEMORY: 
 				read_memory_flag_o = 1'b1; 
 
-			get_product: 
+			GET_PRODUCT: 
 				get_product_flag_o = 1'b1; 
 
-			product_stable: ;
+			PRODUCT_STABLE: ;
 
-			add_product: 
+			ADD_PRODUCT: 
 				add_product_flag_o = 1'b1; 
 
-			iteration_count: 
+			ITERATION_COUNT: 
 				iteration_count_flag_o = 1'b1; 
 
-			z_set_data: 
+			Z_SET_DATA: 
 				z_write_o = 1'b1;
 
-			diagonal_count: 
+			DIAGONAL_COUNT: 
 				diagonal_count_flag_o = 1'b1;
 
-			p_busy_l: 
-				busy_flag_o = 1'b0; 
+			BUSY_LOW: begin 
+				busy_flag_o = 1'b0; 		
+			end 
 
-			p_done_h: 
+			DONE_H: begin
+				busy_flag_o = 1'b0;
 				done_flag_o = 1'b1; 
+			end 
 
-			p_done_l: 
+			DONE_L: begin 
+				busy_flag_o = 1'b0;
 				done_flag_o = 1'b0;   
+			end
 		endcase
 	end : fsm_outputs
 

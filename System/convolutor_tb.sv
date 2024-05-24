@@ -1,27 +1,9 @@
 ///////////////////////////////////////////////////////////////
-// Module:        <module_name>
-// Author:        <author_name>
-// Date:          <date>
-// Description:   <brief description of the module>
+// Module:        <convolutor_tb>
+// Author:        <Alejandro Kelly>
+// Date:          <May 23rd 2024>
+// Description:   <Testbench for convolution coprocessor>
 // 
-// Parameters:
-//   - <parameter_name_1>: <parameter_description> [default: <default_value>]
-//   - <parameter_name_2>: <parameter_description> [default: <default_value>] 
-//
-// Clocks:
-//   - <clock_name_1>: <clock_description>
-//   - <clock_name_2>: <clock_description> (add more clocks as needed)
-//
-// Inputs:
-//   - <input_name_1>: <input_description>
-//   - <input_name_2>: <input_description> (add more inputs as needed)
-//
-// Outputs:
-//   - <output_name_1>: <output_description>
-//   - <output_name_2>: <output_description> (add more outputs as needed)
-//
-// Revision history:
-//   - <version> (<date>): <changes_made>
 //
 ///////////////////////////////////////////////////////////////
 
@@ -38,25 +20,25 @@ module convolutor_tb ();
   logic busy; 
   logic zwr; 
   logic done;
-  logic z_dout; 
+  logic [15:0] z_dout; 
   logic [DATA_WIDTH-1:0] y_data;
   logic [2*DATA_WIDTH-1:0] z_data; 
   logic [ADDR_WIDTH-1:0] y_addr;
   logic [ADDR_WIDTH:0] z_addr; 		
 
   convolutor conv_top (
-    .clk       (clk), 
-    .rst_n     (rst_n),
-    .start_i   (start_i),
-    .y_data_i  (y_data),
-    .y_addr_o  (y_addr),
-    .y_size_i  (5'd5),
-    .z_data_o  (z_data), 
-    .z_addr_o  (z_addr),
-    .p_busy_o  (busy),
-    .p_done_o  (done),
-    .z_write_en(zwr)
-    ); 
+    .clk      (clk),
+    .rst_n    (rst_n),
+    .start    (start_i),
+    .dataY    (y_data),
+    .sizeY    (5'd5),
+    .memY_addr(y_addr),
+    .dataZ    (z_data),
+    .memZ_addr(z_addr),
+    .busy     (busy),
+    .done     (done),
+    .writeZ   (zwr)
+    );
 
   convolutor_ram_dual_port # (
     .DATA_WIDTH(DATA_WIDTH), 
@@ -99,7 +81,7 @@ module convolutor_tb ();
     rst_n = 1'b1;
     start_i = 1'b1;  
 
-    #3000;       
+    #3000;
     $finish;         
   end
 
