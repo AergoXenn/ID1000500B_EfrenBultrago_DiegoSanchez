@@ -40,9 +40,6 @@ module convolutor_downcounter_cmp_reg # (
   output logic underflow_o //underflow indicator
 );
 
-  logic trigger_edge;
-  logic trigger_q; 
-
   logic [DATA_WIDTH-1:0] cnt;
   logic [DATA_WIDTH-1:0] modulus; 
 
@@ -51,20 +48,8 @@ module convolutor_downcounter_cmp_reg # (
     if(~rst_n) begin
       modulus <= 0;
     end 
-    else if (clr_h) begin
-
-    end
-
-    if (mod_enable_i) begin
+    else if (mod_enable_i) begin
       modulus <= modulus_i;
-      underflow_o <= 1'b0;
-    end
-
-    if (cnt <= modulus && cnt != 0) begin
-      underflow_o <= 1'b1;
-    end
-    else begin
-      underflow_o <= 1'b0;
     end
   end
 
@@ -73,17 +58,22 @@ module convolutor_downcounter_cmp_reg # (
   always_ff @(posedge clk or negedge rst_n) begin : proc_cnt
     if(~rst_n) begin //Asynchronous reset
       cnt <= 0;
+      underflow_o <= 0;
     end 
     else if (clr_h) begin
       cnt <= 0;
+      underflow_o <= 0;
     end
-    
-    if (load_enable_i) begin
+    else if (load_enable_i) begin
       cnt <= preload_i; 
+      underflow_o <= 1'b0;
     end
-
-    if (trig_i && cnt > 0) begin //Count 
-      cnt <= cnt - 1;
+    else if (trig_i & cnt > 0) begin //Count 
+      cnt <= cnt - 1'b1;
+    end
+    else if (trig_i & cnt == 0) begin
+      cnt <= 'b0;
+      underflow_o <= 1'b1;
     end
   end
 

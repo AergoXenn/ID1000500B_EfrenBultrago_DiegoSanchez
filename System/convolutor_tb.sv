@@ -31,7 +31,7 @@ module convolutor_tb ();
     .rst_n    (rst_n),
     .start    (start_i),
     .dataY    (y_data),
-    .sizeY    (5'd5),
+    .sizeY    (5'd10),
     .memY_addr(y_addr),
     .dataZ    (z_data),
     .memZ_addr(z_addr),
@@ -81,7 +81,7 @@ module convolutor_tb ();
     rst_n = 1'b1;
     start_i = 1'b1;  
 
-    #3000;
+    #6000;
     $finish;         
   end
 

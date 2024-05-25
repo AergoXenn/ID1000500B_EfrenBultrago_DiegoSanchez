@@ -241,7 +241,7 @@ module convolutor #(
   localparam X_ADDR_SELECT_WIDTH = 1;
 
   assign x_zero_load = 'b0;
-  assign x_current_diag_load = current_diagonal - sizeY + 1;
+  assign x_current_diag_load = current_diagonal - sizeY + 1'b1;
 
   convolutor_mux_nxn_to_1xn # (
     .DATA_WIDTH(ADDR_WIDTH),
@@ -259,7 +259,7 @@ module convolutor #(
 
   localparam Y_ADDR_SELECT_WIDTH = 1;
 
-  assign y_y_size_load = sizeY - 1;
+  assign y_y_size_load = sizeY - 1'b1;
   assign y_current_diag_load = current_diagonal;
 
   convolutor_mux_nxn_to_1xn # (
@@ -339,7 +339,7 @@ module convolutor #(
     );
 
   assign y_size_compare = y_size_compare_bigger | y_size_compare_equal;
-  assign bounds_valid_flag = y_size_compare & x_size_compare;
+  assign bounds_valid_flag = ~y_addr_underflow & x_size_compare;
 
 /* *************************** X & Y ADDR COMPARE END *********************** */ 
 
