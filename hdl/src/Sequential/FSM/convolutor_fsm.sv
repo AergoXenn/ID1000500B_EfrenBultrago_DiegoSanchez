@@ -178,7 +178,7 @@ end : fsm_next
 		diagonal_count_flag_o = 1'b0;
 		z_write_o = 1'b0;
 		done_flag_o = 1'b0;
-		busy_flag_o = 1'b1;
+		busy_flag_o = 1'b0;
 
 		unique case (next_state) 
 			_INIT: begin
@@ -191,38 +191,62 @@ end : fsm_next
 				register_load_flag_o = 1'b1; 
 			end
 
-			GET_DIAG_SIZE: 
+			GET_DIAG_SIZE: begin
+				busy_flag_o = 1'b1;
 				diag_size_flag_o = 1'b1;
+			end 
 
-			PRELOAD: ;
+			PRELOAD: begin
+				busy_flag_o = 1'b1;
+			end 
 
-			LOAD_HALF_H: 
+			LOAD_HALF_H: begin 
+				busy_flag_o = 1'b1;
 				half_loop_load_en_o = 1'b1;
+			end 
 
-			LOAD_HALF_L: 
+			LOAD_HALF_L: begin
+				busy_flag_o = 1'b1;
 				half_loop_load_en_o = 1'b1;
+			end 
 
-			LOADED: ; 
+			LOADED: begin
+				busy_flag_o = 1'b1;
+			end 
 
-			READ_MEMORY: 
+			READ_MEMORY: begin 
+				busy_flag_o = 1'b1;
 				read_memory_flag_o = 1'b1; 
+			end 
 
-			GET_PRODUCT: 
+			GET_PRODUCT: begin 
+				busy_flag_o = 1'b1;
 				get_product_flag_o = 1'b1; 
+			end 
 
-			PRODUCT_STABLE: ;
+			PRODUCT_STABLE: begin
+				busy_flag_o = 1'b1;
+			end 
 
-			ADD_PRODUCT: 
+			ADD_PRODUCT: begin 
+				busy_flag_o = 1'b1;
 				add_product_flag_o = 1'b1; 
+			end 
 
-			ITERATION_COUNT: 
+			ITERATION_COUNT: begin 
+				busy_flag_o = 1'b1;
 				iteration_count_flag_o = 1'b1; 
+			end 
 
-			Z_SET_DATA: 
+			Z_SET_DATA: begin 
+				busy_flag_o = 1'b1;
 				z_write_o = 1'b1;
+			end 
 
-			DIAGONAL_COUNT: 
+			DIAGONAL_COUNT: begin 
+				busy_flag_o = 1'b1;
 				diagonal_count_flag_o = 1'b1;
+			end 
 
 			BUSY_LOW: begin 
 				busy_flag_o = 1'b0; 		
