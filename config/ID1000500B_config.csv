@@ -1,0 +1,10 @@
+type,alphaID,numID,size,mode,description
+IPID,Convolutor,0x1000500B,,,This is a convolutor of two memories, a RAM memory and a ROM memory, where the result will be written to a RAM memory with a capacity of 64 words of 8 bits each word
+CFG,MEMY,0b00000,32,W,Y input RAM memory
+CFG,MMEMZ,0b00010,64,R,Z input RAM memory
+CFG,AEMY,0b00001,1,W,Set Write Address Pointer of MEMY
+CFG,AMEMZ,0b00011,1,W,Set Read Address Pointer of MMEMZ
+CFG,CSIZEY,0b00100,1,W,This register define the size of the RAM Memory Y
+CFG,ASIZEY,0b00101,1,W,Set Write Address of CSIZEY
+CFG,STATUS,0b11110,1,B,IP status register
+CFG,IPID,0b11111,1,R,IP ID

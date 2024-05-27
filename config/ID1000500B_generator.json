@@ -1,0 +1,51 @@
+{
+    "ipdata": {
+        "comment": "This is a convolutor of two memories, a RAM memory and a ROM memory, where the result will be written to a RAM memory with a capacity of 64 words of 8 bits each word",
+        "enom": "Convolutor",
+        "ipid": "1000500B"
+    },
+    "memories": {
+        "cfgReg": {
+            "comment": "This register define the size of the RAM Memory Y",
+            "enom": "CSIZEY",
+            "size": "1",
+            "val": "5'b00100"
+        },
+        "memIn": [
+            {
+                "comment": "Y input RAM memory",
+                "enom": "MEMY",
+                "size": "32",
+                "val": "5'b00000"
+            }
+        ],
+        "memInStream": {
+        },
+        "memOut": [
+            {
+                "comment": "Z input RAM memory",
+                "enom": "MMEMZ",
+                "size": "64",
+                "val": "5'b00010"
+            }
+        ],
+        "memOutStream": {
+        }
+    },
+    "regs": {
+        "reg1": "",
+        "reg10": "",
+        "reg11": "",
+        "reg12": "",
+        "reg13": "",
+        "reg14": "",
+        "reg15": "",
+        "reg2": "",
+        "reg3": "",
+        "reg4": "",
+        "reg5": "",
+        "reg6": "",
+        "reg7": "",
+        "reg9": ""
+    }
+}
